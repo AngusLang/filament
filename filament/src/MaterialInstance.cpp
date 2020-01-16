@@ -130,7 +130,7 @@ void FMaterialInstance::commitSlow(DriverApi& driver) const {
     }
 }
 
-template<typename T>
+template<typename T, typename>
 inline void FMaterialInstance::setParameter(const char* name, T value) noexcept {
     ssize_t offset = mMaterial->getUniformInterfaceBlock().getUniformOffset(name, 0);
     if (offset >= 0) {
@@ -138,7 +138,7 @@ inline void FMaterialInstance::setParameter(const char* name, T value) noexcept 
     }
 }
 
-template <typename T>
+template <typename T, typename >
 inline void FMaterialInstance::setParameter(const char* name, const T* value, size_t count) noexcept {
     ssize_t offset = mMaterial->getUniformInterfaceBlock().getUniformOffset(name, 0);
     if (offset >= 0) {
@@ -172,44 +172,6 @@ void FMaterialInstance::setCullingMode(CullingMode culling) noexcept {
     mCulling = culling;
 }
 
-// explicit template instantiation of our supported types
-template UTILS_NOINLINE void FMaterialInstance::setParameter<bool>    (const char* name, bool     v) noexcept;
-template UTILS_NOINLINE void FMaterialInstance::setParameter<float>   (const char* name, float    v) noexcept;
-template UTILS_NOINLINE void FMaterialInstance::setParameter<int32_t> (const char* name, int32_t  v) noexcept;
-template UTILS_NOINLINE void FMaterialInstance::setParameter<uint32_t>(const char* name, uint32_t v) noexcept;
-template UTILS_NOINLINE void FMaterialInstance::setParameter<bool2>   (const char* name, bool2    v) noexcept;
-template UTILS_NOINLINE void FMaterialInstance::setParameter<bool3>   (const char* name, bool3    v) noexcept;
-template UTILS_NOINLINE void FMaterialInstance::setParameter<bool4>   (const char* name, bool4    v) noexcept;
-template UTILS_NOINLINE void FMaterialInstance::setParameter<int2>    (const char* name, int2     v) noexcept;
-template UTILS_NOINLINE void FMaterialInstance::setParameter<int3>    (const char* name, int3     v) noexcept;
-template UTILS_NOINLINE void FMaterialInstance::setParameter<int4>    (const char* name, int4     v) noexcept;
-template UTILS_NOINLINE void FMaterialInstance::setParameter<uint2>   (const char* name, uint2    v) noexcept;
-template UTILS_NOINLINE void FMaterialInstance::setParameter<uint3>   (const char* name, uint3    v) noexcept;
-template UTILS_NOINLINE void FMaterialInstance::setParameter<uint4>   (const char* name, uint4    v) noexcept;
-template UTILS_NOINLINE void FMaterialInstance::setParameter<float2>  (const char* name, float2   v) noexcept;
-template UTILS_NOINLINE void FMaterialInstance::setParameter<float3>  (const char* name, float3   v) noexcept;
-template UTILS_NOINLINE void FMaterialInstance::setParameter<float4>  (const char* name, float4   v) noexcept;
-template UTILS_NOINLINE void FMaterialInstance::setParameter<mat3f>   (const char* name, mat3f    v) noexcept;
-template UTILS_NOINLINE void FMaterialInstance::setParameter<mat4f>   (const char* name, mat4f    v) noexcept;
-template UTILS_NOINLINE void FMaterialInstance::setParameter<bool>    (const char* name, const bool     *v, size_t c) noexcept;
-template UTILS_NOINLINE void FMaterialInstance::setParameter<float>   (const char* name, const float    *v, size_t c) noexcept;
-template UTILS_NOINLINE void FMaterialInstance::setParameter<int32_t> (const char* name, const int32_t  *v, size_t c) noexcept;
-template UTILS_NOINLINE void FMaterialInstance::setParameter<uint32_t>(const char* name, const uint32_t *v, size_t c) noexcept;
-template UTILS_NOINLINE void FMaterialInstance::setParameter<bool2>   (const char* name, const bool2    *v, size_t c) noexcept;
-template UTILS_NOINLINE void FMaterialInstance::setParameter<bool3>   (const char* name, const bool3    *v, size_t c) noexcept;
-template UTILS_NOINLINE void FMaterialInstance::setParameter<bool4>   (const char* name, const bool4    *v, size_t c) noexcept;
-template UTILS_NOINLINE void FMaterialInstance::setParameter<int2>    (const char* name, const int2     *v, size_t c) noexcept;
-template UTILS_NOINLINE void FMaterialInstance::setParameter<int3>    (const char* name, const int3     *v, size_t c) noexcept;
-template UTILS_NOINLINE void FMaterialInstance::setParameter<int4>    (const char* name, const int4     *v, size_t c) noexcept;
-template UTILS_NOINLINE void FMaterialInstance::setParameter<uint2>   (const char* name, const uint2    *v, size_t c) noexcept;
-template UTILS_NOINLINE void FMaterialInstance::setParameter<uint3>   (const char* name, const uint3    *v, size_t c) noexcept;
-template UTILS_NOINLINE void FMaterialInstance::setParameter<uint4>   (const char* name, const uint4    *v, size_t c) noexcept;
-template UTILS_NOINLINE void FMaterialInstance::setParameter<float2>  (const char* name, const float2   *v, size_t c) noexcept;
-template UTILS_NOINLINE void FMaterialInstance::setParameter<float3>  (const char* name, const float3   *v, size_t c) noexcept;
-template UTILS_NOINLINE void FMaterialInstance::setParameter<float4>  (const char* name, const float4   *v, size_t c) noexcept;
-template UTILS_NOINLINE void FMaterialInstance::setParameter<mat3f>   (const char* name, const mat3f    *v, size_t c) noexcept;
-template UTILS_NOINLINE void FMaterialInstance::setParameter<mat4f>   (const char* name, const mat4f    *v, size_t c) noexcept;
-
 } // namespace details
 
 using namespace details;
@@ -218,12 +180,12 @@ Material const* MaterialInstance::getMaterial() const noexcept {
     return upcast(this)->mMaterial;
 }
 
-template <typename T>
+template <typename T, typename>
 void MaterialInstance::setParameter(const char* name, T value) noexcept {
     upcast(this)->setParameter<T>(name, value);
 }
 
-template <typename T>
+template <typename T, typename>
 void MaterialInstance::setParameter(const char* name, const T* value, size_t count) noexcept {
     upcast(this)->setParameter<T>(name, value, count);
 }
