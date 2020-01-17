@@ -54,6 +54,7 @@ class MainActivity : Activity() {
     private lateinit var assetLoader: AssetLoader
     private lateinit var filamentAsset: FilamentAsset
     private lateinit var gestureDetector: GestureDetector
+    private lateinit var filamentAnimator: Animator
 
     // core filament objects
     private lateinit var engine: Engine
@@ -132,6 +133,9 @@ class MainActivity : Activity() {
             resourceLoader.addResourceData(uri, buffer)
         }
         resourceLoader.loadResources(filamentAsset)
+        resourceLoader.destroy()
+        filamentAnimator = filamentAsset.animator
+        filamentAsset.releaseSourceData()
 
         Log.i("gltf-viewer", "Adding ${filamentAsset.entities.size} entities to scene...")
         scene.addEntities(filamentAsset.entities)
@@ -173,8 +177,8 @@ class MainActivity : Activity() {
         animator.addUpdateListener { a ->
             if (filamentAsset.animator.animationCount > 0) {
                 val elapsedTimeInSeconds = a.currentPlayTime.toFloat() / 1000.0f
-                filamentAsset.animator.applyAnimation(0, elapsedTimeInSeconds)
-                filamentAsset.animator.updateBoneMatrices()
+                filamentAnimator.applyAnimation(0, elapsedTimeInSeconds)
+                filamentAnimator.updateBoneMatrices()
             }
         }
         animator.start()
