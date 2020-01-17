@@ -452,6 +452,25 @@ FrameGraphId<FrameGraphTexture> FRenderer::refractionPass(FrameGraph& fg,
         // Copy the color buffer into a texture, we use resolve() because in case of a multi-sample
         // buffer, it'll also resolve it.
         input = ppm.resolve(fg, "Refraction Buffer", 3, input);
+
+        // N = 6q-1
+        // 2K-1 - 6q-1
+        // K = 3q
+        // a = 1/2qq
+        // ==> a = 1/(2KK/9) = 9/2KK = 4.5/KK
+        // with K=15, alpha-min = 0.02
+
+        // with 3 layers, alpha-min at layer3 = 0.02/4
+
+        float alpha = 0.02;
+        input = ppm.separableGaussianBlurPass(fg, input, 0, 1,   alpha, int2{ 1, 0 });
+        input = ppm.separableGaussianBlurPass(fg, input, 1, 1, 4*alpha, int2{ 0, 1 }); // FIXME: we can't read/write in the same texture
+
+        alpha = 0.005;
+        input = ppm.separableGaussianBlurPass(fg, input, 1, 2,  4*alpha, int2{ 1, 0 });
+        input = ppm.separableGaussianBlurPass(fg, input, 2, 2, 16*alpha, int2{ 0, 1 }); // FIXME: we can't read/write in the same texture
+
+
         // TODO: create mip-levels
 
 
@@ -490,7 +509,7 @@ FrameGraphId<FrameGraphTexture> FRenderer::refractionPass(FrameGraph& fg,
     return output;
 }
 
-FrameGraphId <FrameGraphTexture> FRenderer::colorPass(FrameGraph& fg, const char* name,
+FrameGraphId<FrameGraphTexture> FRenderer::colorPass(FrameGraph& fg, const char* name,
         FrameGraphTexture::Descriptor const& colorBufferDesc, ColorPassConfig const& config,
         RenderPass const& pass, backend::TargetBufferFlags clearFlags,
         math::float4 clearColor) noexcept {
